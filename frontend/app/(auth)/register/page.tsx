@@ -7,7 +7,7 @@ export default function RegisterPage() {
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-white p-6">
       <div className="w-full max-w-[480px] flex flex-col items-center">
         
-        {/* LOGO */}
+        {/* LOGO of campusbazar*/}
         <div className="relative h-20 w-40 mb-8">
           <Image 
             src="/logo.png" 
