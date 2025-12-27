@@ -10,7 +10,7 @@ export default function LoginPage() {
         {/* LOGO of campus bazar*/}
         <div className="relative h-20 w-44 mb-6">
           <Image 
-            src="/logo.png" 
+            src="/logo.png"  //logo
             alt="Campus Bazar" 
             fill 
             className="object-contain" 
