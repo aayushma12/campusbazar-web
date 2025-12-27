@@ -7,7 +7,7 @@ export default function LoginPage() {
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-white p-6">
       <div className="w-full max-w-[450px] flex flex-col items-center">
         
-        {/* LOGO */}
+        {/* LOGO of campus bazar*/}
         <div className="relative h-20 w-44 mb-6">
           <Image 
             src="/logo.png" 
