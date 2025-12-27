@@ -10,7 +10,7 @@ export default function RegisterPage() {
         {/* LOGO of campusbazar*/}
         <div className="relative h-20 w-40 mb-8">
           <Image 
-            src="/logo.png" 
+            src="/logo.png"  //logo
             alt="Campus Bazar Logo" 
             fill 
             className="object-contain" 
