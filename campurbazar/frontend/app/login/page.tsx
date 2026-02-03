@@ -151,7 +151,7 @@ export default function LoginPage() {
                                 placeholder="••••••••"
                             />
                         </div>
-
+                    
                         <button
                             type="submit"
                             disabled={isLoading}
@@ -200,7 +200,7 @@ export default function LoginPage() {
                         </div>
                     )}
 
-                    {/* Admin Info */}
+                    {/* Admin Information */}
                     {isAdminLogin && (
                         <div className="bg-indigo-50 border border-indigo-100 text-indigo-700 px-4 py-3 rounded-lg text-xs">
                             <p className="font-semibold mb-1">Demo Admin Credentials:</p>
