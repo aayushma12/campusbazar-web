@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Shield, Settings, Database, Lock, Bell, Mail } from "lucide-react";
 
+//admin panel
 export default function AdminPanelPage() {
     const { isAdmin } = useAuthStore();
     const router = useRouter();
