@@ -7,6 +7,7 @@ import { useAuthStore } from "@/store/authStore";
 import Link from "next/link";
 import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
 
+//Register page
 export default function RegisterPage() {
     const router = useRouter();
     const { setAuth } = useAuthStore();
