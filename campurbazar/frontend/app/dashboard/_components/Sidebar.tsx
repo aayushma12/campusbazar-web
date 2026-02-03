@@ -1,6 +1,7 @@
 "use client";
 import React from 'react';
 
+//sidebar
 export default function Sidebar() {
   return (
     <aside className="w-64 bg-white dark:bg-gray-800 p-4 shadow-lg flex flex-col">
