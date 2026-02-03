@@ -6,6 +6,7 @@ import { useLoginMutation, useAdminLoginMutation } from "@/auth/queries";
 import { useAuthStore } from "@/store/authStore";
 import Link from "next/link";
 
+//login page
 export default function LoginPage() {
     const router = useRouter();
     const { setAuth } = useAuthStore();
