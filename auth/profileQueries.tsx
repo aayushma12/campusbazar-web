@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axiosApi from "./axios";
 import { ENDPOINTS } from "./endpoints";
 
-/* ================= PROFILE QUERIES ================= */
+//profile
 
 export interface ProfileData {
     id: string;
