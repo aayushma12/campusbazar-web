@@ -1,99 +1,151 @@
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/authStore";
 import Link from "next/link";
-import { 
-  ShoppingBag, 
-  ArrowRight, 
-  Store, 
-  BookOpen, 
-  Users
-} from "lucide-react";
+import { ArrowRight, ShoppingBag, Users, BookOpen, Shield, Sparkles } from "lucide-react";
 
 export default function HomePage() {
+  const router = useRouter();
+  const { isAuthenticated, isAdmin } = useAuthStore();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      if (isAdmin()) {
+        router.push("/dashboard/admin");
+      } else {
+        router.push("/dashboard");
+      }
+    }
+  }, [isAuthenticated, isAdmin, router]);
+
+  const features = [
+    {
+      icon: ShoppingBag,
+      title: "Marketplace",
+      description: "Buy and sell items within your campus community",
+      color: "from-emerald-400 to-green-600",
+    },
+    {
+      icon: BookOpen,
+      title: "Tutoring",
+      description: "Find tutors or offer your expertise to help others",
+      color: "from-green-400 to-teal-600",
+    },
+    {
+      icon: Users,
+      title: "Community",
+      description: "Connect with students and build lasting relationships",
+      color: "from-teal-400 to-emerald-600",
+    },
+    {
+      icon: Shield,
+      title: "Secure",
+      description: "Safe and verified transactions within your campus",
+      color: "from-emerald-500 to-green-700",
+    },
+  ];
+
+  if (isAuthenticated) return null;
+
   return (
-    <div className="min-h-screen bg-white font-sans text-slate-900 selection:bg-green-100 selection:text-green-900">
-      <nav className="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-xl border-b border-green-50">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-2.5 group cursor-pointer">
-            <div className="bg-green-600 p-2 rounded-xl shadow-lg shadow-green-200 group-hover:scale-110 transition-transform duration-300">
-              <ShoppingBag size={20} className="text-white" />
+    <div className="min-h-screen bg-[#f8fafc] overflow-x-hidden">
+      {/* Dynamic Background Pattern */}
+      <div className="absolute inset-0 z-0 opacity-20 pointer-events-none" 
+           style={{ backgroundImage: 'radial-gradient(#10b981 0.5px, transparent 0.5px)', backgroundSize: '24px 24px' }}></div>
+
+      {/* Hero Section */}
+      <section className="relative pt-20 pb-32 overflow-hidden">
+        {/* Animated Blobs */}
+        <div className="absolute top-0 -left-4 w-72 h-72 bg-green-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+        <div className="absolute top-0 -right-4 w-72 h-72 bg-emerald-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="text-center max-w-4xl mx-auto space-y-10">
+            {/* New Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-50 border border-green-100 text-green-700 text-sm font-bold shadow-sm animate-bounce">
+              <Sparkles className="w-4 h-4" />
+              <span>The #1 Campus Marketplace</span>
             </div>
-            <span className="text-2xl font-black tracking-tighter text-slate-800">
-              Campus<span className="text-green-600">Bazar</span>
-            </span>
-          </div>
 
-          <div className="flex items-center gap-3 md:gap-6">
-            <Link 
-              href="/login" 
-              className="hidden sm:block text-sm font-bold text-slate-600 hover:text-green-600 transition-colors"
-            >
-              Login
-            </Link>
-            <Link 
-              href="/register" 
-              className="bg-green-600 text-white px-7 py-3 rounded-full text-sm font-bold shadow-xl shadow-green-100 hover:bg-green-700 transition-all active:scale-95"
-            >
-              Join the Community
-            </Link>
-          </div>
-        </div>
-      </nav>
-
-      <main className="relative pt-32 lg:pt-48 pb-12 overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-full -z-10 bg-[radial-gradient(circle_at_50%_120%,#f0fdf4,white)]" />
-        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-          <div className="space-y-10 text-center lg:text-left">
-            <h1 className="text-6xl md:text-8xl font-black leading-[0.95] tracking-tighter">
-              <span className="text-slate-800">Trade Smart.</span> <br />
-              <span className="bg-gradient-to-r from-green-600 to-emerald-500 bg-clip-text text-transparent">Learn Better.</span>
+            <h1 className="text-6xl md:text-8xl font-black text-gray-900 tracking-tight leading-none">
+              Shop Smarter, <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-emerald-500">
+                Campus Wide.
+              </span>
             </h1>
-            <p className="text-xl text-slate-500 font-medium leading-relaxed max-w-xl mx-auto lg:mx-0">
-              The all-in-one student marketplace and tutoring hub. Our platform facilitates marketplace activities and tutoring requests through a structured, user-friendly interface.
+
+            <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+              Experience the ultimate student-powered marketplace. Secure, fast, and exclusive to your university community.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-              <Link 
-                href="/register" 
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-gradient-to-br from-green-600 to-emerald-600 text-white px-12 py-6 rounded-2xl font-bold text-lg hover:shadow-2xl hover:shadow-green-200 hover:-translate-y-1 transition-all group"
+
+            <div className="flex flex-col sm:flex-row gap-5 justify-center items-center">
+              <Link
+                href="/register"
+                className="group px-10 py-5 bg-green-600 text-white rounded-2xl font-bold text-lg hover:bg-green-700 transition-all shadow-xl shadow-green-200 hover:shadow-green-300 flex items-center gap-3"
               >
-                Start Exploring
-                <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
+                Join the Community
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <Link
+                href="/login"
+                className="px-10 py-5 bg-white text-gray-700 border-2 border-gray-100 rounded-2xl font-bold text-lg hover:border-green-200 hover:text-green-600 transition-all shadow-sm"
+              >
+                Member Sign In
               </Link>
             </div>
           </div>
-          <div className="relative group">
-            <div className="absolute -inset-4 bg-green-200 rounded-[3rem] blur-3xl opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
-            <div className="relative aspect-[4/5] sm:aspect-square lg:aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-[0_30px_60px_-15px_rgba(5,150,105,0.15)] border-[12px] border-white transition-transform duration-500 group-hover:rotate-1">
-              <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop" alt="Campus Life" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-            </div>
-          </div>
-        </div>
-      </main>
-
-      <section className="py-12 max-w-7xl mx-auto px-6 relative">
-        <div className="grid md:grid-cols-3 gap-8">
-            {[
-                { title: "Marketplace", icon: <Store />, desc: "Trade textbooks, electronics, and essentials securely with your peers.", color: "text-green-600", bg: "bg-green-50" },
-                { title: "Tutoring Hub", icon: <Users />, desc: "Post academic requests or offer help to earn and support the community.", color: "text-emerald-600", bg: "bg-emerald-50" },
-                { title: "Resources", icon: <BookOpen />, desc: "Share study materials and lecture notes in a organized central space.", color: "text-green-700", bg: "bg-green-50" }
-            ].map((feature, i) => (
-                <div key={i} className="bg-white p-10 rounded-[2.5rem] border border-green-50 hover:border-green-200 hover:shadow-xl hover:shadow-green-500/5 transition-all group cursor-default">
-                    <div className={`${feature.color} ${feature.bg} mb-8 inline-block p-5 rounded-2xl group-hover:scale-110 transition-transform`}>
-                        {feature.icon}
-                    </div>
-                    <h3 className="text-2xl font-bold mb-4 text-slate-800">{feature.title}</h3>
-                    <p className="text-slate-500 text-base leading-relaxed">{feature.desc}</p>
-                </div>
-            ))}
         </div>
       </section>
 
-      <footer className="py-12 border-t border-green-50 bg-green-50/20">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col items-center">
-          <div className="flex items-center gap-2 mb-6">
-            <ShoppingBag size={28} className="text-green-600" />
-            <span className="text-2xl font-black tracking-tighter text-slate-800 text-center">CampusBazar</span>
-          </div>
-          <p className="text-green-700/40 text-xs font-black uppercase tracking-[0.4em] text-center">Facilitating Student Interaction & Support</p>
+      {/* Features Section */}
+      <section className="container mx-auto px-4 py-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {features.map((feature, index) => (
+            <div
+              key={index}
+              className="group relative bg-white border border-gray-100 p-8 rounded-[2.5rem] shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden"
+            >
+              <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-5 transition-opacity rounded-bl-full`}></div>
+              
+              <div className={`w-16 h-16 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center mb-6 shadow-lg rotate-3 group-hover:rotate-0 transition-transform duration-500`}>
+                <feature.icon className="w-8 h-8 text-white" />
+              </div>
+              
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">{feature.title}</h3>
+              <p className="text-gray-500 leading-relaxed font-medium">{feature.description}</p>
+            </div>
+          ))}
         </div>
+      </section>
+
+      {/* Stats Glass Card */}
+      <section className="container mx-auto px-4 py-16">
+        <div className="bg-gradient-to-r from-green-600 to-emerald-700 rounded-[3rem] p-12 relative overflow-hidden shadow-3xl">
+          {/* Decorative Circles */}
+          <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full -translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative z-10">
+            <div className="text-center text-white">
+              <h4 className="text-5xl font-black mb-2">2.5k+</h4>
+              <p className="text-green-100 font-bold uppercase tracking-widest text-xs">Verified Students</p>
+            </div>
+            <div className="text-center text-white border-y md:border-y-0 md:border-x border-white/20 py-8 md:py-0">
+              <h4 className="text-5xl font-black mb-2">12k+</h4>
+              <p className="text-green-100 font-bold uppercase tracking-widest text-xs">Total Listings</p>
+            </div>
+            <div className="text-center text-white">
+              <h4 className="text-5xl font-black mb-2">98%</h4>
+              <p className="text-green-100 font-bold uppercase tracking-widest text-xs">Positive Feedback</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-12 text-center text-gray-400 font-medium">
+        <p>© 2024 CampusBazar • Secure. Simple. Student-driven.</p>
       </footer>
     </div>
   );
