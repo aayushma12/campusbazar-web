@@ -3,8 +3,7 @@ import axiosApi from "./axios";
 import { ENDPOINTS } from "./endpoints";
 
 /* ================= REGISTER ================= */
-
-interface RegisterPayload {
+export interface RegisterPayload {
   name: string;
   email: string;
   password: string;
@@ -26,8 +25,7 @@ export const useRegisterMutation = () => {
 };
 
 /* ================= LOGIN ================= */
-
-interface LoginPayload {
+export interface LoginPayload {
   email: string;
   password: string;
 }
@@ -43,6 +41,47 @@ export const useLoginMutation = () => {
     },
     onSuccess: (data) => {
       console.log("Login successful:", data);
+    },
+  });
+};
+
+/* ================= FORGOT PASSWORD ================= */
+export interface ForgotPasswordPayload {
+  email: string;
+}
+
+export const useForgotPasswordMutation = () => {
+  return useMutation({
+    mutationFn: async (data: ForgotPasswordPayload) => {
+      const res = await axiosApi.post(ENDPOINTS.FORGOT_PASSWORD, data);
+      return res.data;
+    },
+    onError: (error: any) => {
+      console.error("Forgot password failed:", error.response?.data?.message || error.message);
+    },
+    onSuccess: (data) => {
+      console.log("Reset link sent successfully:", data);
+    },
+  });
+};
+
+/* ================= RESET PASSWORD ================= */
+export interface ResetPasswordPayload {
+  token: string;
+  password: string;
+}
+
+export const useResetPasswordMutation = () => {
+  return useMutation({
+    mutationFn: async (data: ResetPasswordPayload) => {
+      const res = await axiosApi.post(ENDPOINTS.RESET_PASSWORD, data);
+      return res.data;
+    },
+    onError: (error: any) => {
+      console.error("Reset password failed:", error.response?.data?.message || error.message);
+    },
+    onSuccess: (data) => {
+      console.log("Password reset successfully:", data);
     },
   });
 };
