@@ -1,11 +1,11 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'user' | 'admin';
+  role: "user" | "admin";
   phoneNumber?: string;
   studentId?: string;
   batch?: string;
@@ -20,7 +20,8 @@ interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;
-  isAdmin: () => boolean; // Note: This is a function, it won't be saved to LocalStorage
+  isAdmin: () => boolean;
+  getToken: () => string | null; // <-- added
   setAuth: (user: User, accessToken: string, refreshToken: string) => void;
   updateUser: (user: Partial<User>) => void;
   logout: () => void;
@@ -34,41 +35,24 @@ export const useAuthStore = create<AuthState>()(
       refreshToken: null,
       isAuthenticated: false,
 
-      isAdmin: () => {
-        const user = get().user;
-        return user?.role === 'admin';
-      },
+      isAdmin: () => get().user?.role === "admin",
+      getToken: () => get().accessToken, // <-- added
 
       setAuth: (user, accessToken, refreshToken) => {
-        set({
-          user,
-          accessToken,
-          refreshToken,
-          isAuthenticated: true,
-        });
+        set({ user, accessToken, refreshToken, isAuthenticated: true });
       },
 
       updateUser: (userData) => {
         const currentUser = get().user;
-        if (currentUser) {
-          set({
-            user: { ...currentUser, ...userData },
-          });
-        }
+        if (currentUser) set({ user: { ...currentUser, ...userData } });
       },
 
       logout: () => {
-        set({
-          user: null,
-          accessToken: null,
-          refreshToken: null,
-          isAuthenticated: false,
-        });
+        set({ user: null, accessToken: null, refreshToken: null, isAuthenticated: false });
       },
     }),
     {
-      name: 'auth-storage',
-      // We tell Zustand exactly which fields to save in the browser's memory
+      name: "auth-storage",
       partialize: (state) => ({
         user: state.user,
         accessToken: state.accessToken,
