@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation"; // Changed useParams to useSearchParams
-import { useResetPasswordMutation } from "@/auth/queries";
+import { useLoginMutation, useResetPasswordMutation } from "@/auth/queries";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { Lock, Eye, EyeOff, ArrowLeft } from "lucide-react";
