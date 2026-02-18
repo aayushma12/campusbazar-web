@@ -6,6 +6,8 @@ import axiosApi from "./axios";
  * Interfaces / Types
  * ============================
  */
+
+// User model
 export interface User {
   id: string;
   name: string;
@@ -20,6 +22,7 @@ export interface User {
   updatedAt?: string;
 }
 
+// Payloads
 export interface LoginPayload {
   email: string;
   password: string;
@@ -32,8 +35,13 @@ export interface RegisterPayload {
   role?: string;
 }
 
-export interface ResetPasswordPayload {
+export interface ForgotPasswordPayload {
   email: string;
+}
+
+export interface ResetPasswordPayload {
+  password: string;
+  token: string;
 }
 
 /**
@@ -50,11 +58,14 @@ export const useLoginMutation = () => {
       return res.data;
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries(); // refetch queries after login if needed
+      queryClient.invalidateQueries(); // Refetch any queries if needed
       console.log("Login successful:", data);
     },
     onError: (error: any) => {
-      console.error("Login failed:", error.response?.data?.message || error.message);
+      console.error(
+        "Login failed:",
+        error.response?.data?.message || error.message
+      );
     },
   });
 };
@@ -75,6 +86,29 @@ export const useRegisterMutation = () => {
 
 /**
  * ============================
+ * FORGOT PASSWORD MUTATION
+ * ============================
+ */
+export const useForgotPasswordMutation = () => {
+  return useMutation({
+    mutationFn: async (payload: ForgotPasswordPayload) => {
+      const res = await axiosApi.post("/auth/forgot-password", payload);
+      return res.data;
+    },
+    onSuccess: () => {
+      console.log("Password reset email sent successfully");
+    },
+    onError: (error: any) => {
+      console.error(
+        "Forgot password failed:",
+        error.response?.data?.message || error.message
+      );
+    },
+  });
+};
+
+/**
+ * ============================
  * RESET PASSWORD MUTATION
  * ============================
  */
@@ -83,6 +117,15 @@ export const useResetPasswordMutation = () => {
     mutationFn: async (payload: ResetPasswordPayload) => {
       const res = await axiosApi.post("/auth/reset-password", payload);
       return res.data;
+    },
+    onSuccess: () => {
+      console.log("Password reset successfully");
+    },
+    onError: (error: any) => {
+      console.error(
+        "Reset password failed:",
+        error.response?.data?.message || error.message
+      );
     },
   });
 };

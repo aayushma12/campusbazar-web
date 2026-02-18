@@ -13,7 +13,7 @@ export default function ResetPasswordPage() {
     
     // Grab the token from the query string (?token=...)
     const token = searchParams.get("token");
-    
+     
     const resetMutation = useResetPasswordMutation();
 
     const [password, setPassword] = useState("");
