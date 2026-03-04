@@ -1,26 +1,13 @@
+// queries.tsx
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosApi from "./axios";
+import { normalizeUser, type User } from "@/types/user";
 
 /**
  * ============================
  * Interfaces / Types
  * ============================
  */
-
-// User model
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  phoneNumber?: string;
-  studentId?: string;
-  batch?: string;
-  collegeId?: string;
-  profilePicture?: string | null;
-  createdAt?: string;
-  updatedAt?: string;
-}
 
 // Payloads
 export interface LoginPayload {
@@ -32,6 +19,8 @@ export interface RegisterPayload {
   name: string;
   email: string;
   password: string;
+  university: string;
+  campus: string;
   role?: string;
 }
 
@@ -50,22 +39,10 @@ export interface ResetPasswordPayload {
  * ============================
  */
 export const useLoginMutation = () => {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async (payload: LoginPayload) => {
-      const res = await axiosApi.post("/auth/login", payload);
+      const res = await axiosApi.post("/auth/login", payload); // ✅ no /api/v1 prefix
       return res.data;
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries(); // Refetch any queries if needed
-      console.log("Login successful:", data);
-    },
-    onError: (error: any) => {
-      console.error(
-        "Login failed:",
-        error.response?.data?.message || error.message
-      );
     },
   });
 };
@@ -95,15 +72,6 @@ export const useForgotPasswordMutation = () => {
       const res = await axiosApi.post("/auth/forgot-password", payload);
       return res.data;
     },
-    onSuccess: () => {
-      console.log("Password reset email sent successfully");
-    },
-    onError: (error: any) => {
-      console.error(
-        "Forgot password failed:",
-        error.response?.data?.message || error.message
-      );
-    },
   });
 };
 
@@ -114,18 +82,10 @@ export const useForgotPasswordMutation = () => {
  */
 export const useResetPasswordMutation = () => {
   return useMutation({
-    mutationFn: async (payload: ResetPasswordPayload) => {
-      const res = await axiosApi.post("/auth/reset-password", payload);
+    mutationFn: async ({ password, token }: ResetPasswordPayload) => {
+      console.log("Reset password called with token:", token);
+      const res = await axiosApi.post(`/auth/reset-password/${token}`, { password });
       return res.data;
-    },
-    onSuccess: () => {
-      console.log("Password reset successfully");
-    },
-    onError: (error: any) => {
-      console.error(
-        "Reset password failed:",
-        error.response?.data?.message || error.message
-      );
     },
   });
 };
@@ -136,13 +96,26 @@ export const useResetPasswordMutation = () => {
  * ============================
  */
 export const useUsersQuery = () => {
-  return useQuery<User[]>({
+  return useQuery<User[], Error>({
     queryKey: ["users"],
-    queryFn: async () => {
-      const res = await axiosApi.get("/admin/users");
-      return res.data;
+    queryFn: async (): Promise<User[]> => {
+      const res = await axiosApi.get("/auth/users");
+      const payload = res.data;
+      const rawUsers = Array.isArray(payload?.data)
+        ? payload.data
+        : Array.isArray(payload?.data?.data)
+          ? payload.data.data
+          : Array.isArray(payload?.users)
+            ? payload.users
+            : Array.isArray(payload)
+              ? payload
+              : [];
+
+      return rawUsers
+        .map((raw: unknown) => normalizeUser(raw))
+        .filter((user: User | null): user is User => user !== null);
     },
-    staleTime: 1000 * 60, // cache 1 minute
+    staleTime: 1000 * 60,
   });
 };
 
@@ -156,7 +129,7 @@ export const useDeleteUserMutation = () => {
 
   return useMutation({
     mutationFn: async (userId: string) => {
-      const res = await axiosApi.delete(`/admin/users/${userId}`);
+      const res = await axiosApi.delete(`/auth/users/${userId}`);
       return res.data;
     },
     onSuccess: () => {
@@ -175,7 +148,7 @@ export const useUpdateUserRoleMutation = () => {
 
   return useMutation({
     mutationFn: async ({ userId, role }: { userId: string; role: string }) => {
-      const res = await axiosApi.patch(`/admin/users/${userId}/role`, { role });
+      const res = await axiosApi.patch(`/auth/users/${userId}/role`, { role });
       return res.data;
     },
     onSuccess: () => {

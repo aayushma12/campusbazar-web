@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation"; // Changed useParams to useSearchParams
 import { useLoginMutation, useResetPasswordMutation } from "@/auth/queries";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { Lock, Eye, EyeOff, ArrowLeft } from "lucide-react";
 
-export default function ResetPasswordPage() {
+function ResetPasswordPageContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     
@@ -151,5 +151,19 @@ export default function ResetPasswordPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function ResetPasswordPage() {
+    return (
+        <Suspense
+            fallback={
+                <div className="min-h-screen flex items-center justify-center bg-[#f0f9f4]">
+                    <p className="text-sm font-semibold text-green-700">Loading reset page...</p>
+                </div>
+            }
+        >
+            <ResetPasswordPageContent />
+        </Suspense>
     );
 }

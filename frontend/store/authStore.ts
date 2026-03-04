@@ -1,30 +1,28 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
-
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  role: "user" | "admin";
-  phoneNumber?: string;
-  studentId?: string;
-  batch?: string;
-  collegeId?: string;
-  profilePicture?: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import { getUserId, normalizeUser, type User } from '@/types/user';
 
 interface AuthState {
   user: User | null;
   accessToken: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;
-  isAdmin: () => boolean;
-  getToken: () => string | null; // <-- added
-  setAuth: (user: User, accessToken: string, refreshToken: string) => void;
-  updateUser: (user: Partial<User>) => void;
+  setAuth: (user: unknown, accessToken: string, refreshToken?: string | null) => void;
+  updateUser: (patch: Partial<User>) => void;
   logout: () => void;
+  isAdmin: () => boolean;
+}
+
+function getConfiguredAdminIds(): string[] {
+  const raw =
+    process.env.NEXT_PUBLIC_ADMIN_USER_IDS ||
+    process.env.NEXT_PUBLIC_ADMIN_USER_ID ||
+    '';
+
+  return raw
+    .split(',')
+    .map((id) => id.trim())
+    .filter(Boolean);
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -35,24 +33,46 @@ export const useAuthStore = create<AuthState>()(
       refreshToken: null,
       isAuthenticated: false,
 
-      isAdmin: () => get().user?.role === "admin",
-      getToken: () => get().accessToken, // <-- added
-
       setAuth: (user, accessToken, refreshToken) => {
-        set({ user, accessToken, refreshToken, isAuthenticated: true });
+        const normalized = normalizeUser(user);
+        set({
+          user: normalized,
+          accessToken: accessToken || null,
+          refreshToken: refreshToken || null,
+          isAuthenticated: Boolean(accessToken && normalized),
+        });
       },
 
-      updateUser: (userData) => {
-        const currentUser = get().user;
-        if (currentUser) set({ user: { ...currentUser, ...userData } });
+      updateUser: (patch) => {
+        const current = get().user;
+        if (!current) return;
+
+        const merged = normalizeUser({ ...current, ...patch });
+        set({ user: merged ?? current });
       },
 
       logout: () => {
-        set({ user: null, accessToken: null, refreshToken: null, isAuthenticated: false });
+        set({
+          user: null,
+          accessToken: null,
+          refreshToken: null,
+          isAuthenticated: false,
+        });
+      },
+
+      isAdmin: () => {
+        const user = get().user;
+        if (!user) return false;
+
+        if (user.role === 'admin') return true;
+
+        const configuredAdminIds = getConfiguredAdminIds();
+        const userId = getUserId(user);
+        return Boolean(userId && configuredAdminIds.includes(userId));
       },
     }),
     {
-      name: "auth-storage",
+      name: 'auth-storage',
       partialize: (state) => ({
         user: state.user,
         accessToken: state.accessToken,

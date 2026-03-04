@@ -52,8 +52,8 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-[#f8fafc] overflow-x-hidden">
       {/* Dynamic Background Pattern */}
-      <div className="absolute inset-0 z-0 opacity-20 pointer-events-none" 
-           style={{ backgroundImage: 'radial-gradient(#10b981 0.5px, transparent 0.5px)', backgroundSize: '24px 24px' }}></div>
+      <div className="absolute inset-0 z-0 opacity-20 pointer-events-none"
+        style={{ backgroundImage: 'radial-gradient(#10b981 0.5px, transparent 0.5px)', backgroundSize: '24px 24px' }}></div>
 
       {/* Hero Section */}
       <section className="relative pt-20 pb-32 overflow-hidden">
@@ -108,11 +108,11 @@ export default function HomePage() {
               className="group relative bg-white border border-gray-100 p-8 rounded-[2.5rem] shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden"
             >
               <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-5 transition-opacity rounded-bl-full`}></div>
-              
+
               <div className={`w-16 h-16 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center mb-6 shadow-lg rotate-3 group-hover:rotate-0 transition-transform duration-500`}>
                 <feature.icon className="w-8 h-8 text-white" />
               </div>
-              
+
               <h3 className="text-2xl font-bold text-gray-900 mb-3">{feature.title}</h3>
               <p className="text-gray-500 leading-relaxed font-medium">{feature.description}</p>
             </div>
@@ -125,7 +125,7 @@ export default function HomePage() {
         <div className="bg-gradient-to-r from-green-600 to-emerald-700 rounded-[3rem] p-12 relative overflow-hidden shadow-3xl">
           {/* Decorative Circles */}
           <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full -translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative z-10">
             <div className="text-center text-white">
               <h4 className="text-5xl font-black mb-2">2.5k+</h4>
