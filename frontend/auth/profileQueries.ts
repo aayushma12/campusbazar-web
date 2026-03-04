@@ -1,19 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosApi from "@/auth/axios";
+import { normalizeUser, type User } from "@/types/user";
 
-export interface Profile {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  phoneNumber?: string;
-  studentId?: string;
-  batch?: string;
-  collegeId?: string;
-  profilePicture?: string | null;
-  createdAt?: string;
-  updatedAt?: string;
-}
+export type Profile = User;
 
 export interface UpdateProfilePayload {
   name?: string;
@@ -37,7 +26,15 @@ export const useProfileQuery = () => {
     queryKey: ["profile"],
     queryFn: async () => {
       const res = await axiosApi.get(ENDPOINTS.PROFILE);
-      return res.data;
+
+      const payload = res.data;
+      const profile = normalizeUser(payload?.data ?? payload);
+
+      if (!profile) {
+        throw new Error("Invalid profile response from server");
+      }
+
+      return profile;
     },
   });
 };
