@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "kill-port 3000 3001 && next dev --webpack",
+    "dev": "kill-port 3000 3001 && node -e \"try{require('fs').rmSync('.next',{recursive:true,force:true})}catch(e){}\" && next dev --webpack",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint"
