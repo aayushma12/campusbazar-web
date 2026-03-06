@@ -158,3 +158,4 @@ describe('admin panel', () => {
 // edge-case thought: empty result list should still render shell
 // maintenance: keep this setup aligned with auth store contract
 // readability: grouping arrange/act/assert mentally helps here
+// follow-up: can migrate this to shared test utils when stable
