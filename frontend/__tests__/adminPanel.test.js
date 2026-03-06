@@ -156,3 +156,4 @@ describe('admin panel', () => {
 // TODO(later): if labels become semantic, tighten these selectors
 // wording check: expectation follows current API response shape
 // edge-case thought: empty result list should still render shell
+// maintenance: keep this setup aligned with auth store contract
