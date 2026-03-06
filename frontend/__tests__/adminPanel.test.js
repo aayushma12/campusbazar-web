@@ -159,3 +159,4 @@ describe('admin panel', () => {
 // maintenance: keep this setup aligned with auth store contract
 // readability: grouping arrange/act/assert mentally helps here
 // follow-up: can migrate this to shared test utils when stable
+// context: this assertion protects the role-based branch
