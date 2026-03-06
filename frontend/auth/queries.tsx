@@ -129,8 +129,61 @@ export const useDeleteUserMutation = () => {
 
   return useMutation({
     mutationFn: async (userId: string) => {
-      const res = await axiosApi.delete(`/auth/users/${userId}`);
-      return res.data;
+      if (!userId) {
+        throw new Error("Missing user id for delete operation.");
+      }
+
+      const attempts: Array<{
+        method: "delete" | "post";
+        path: string;
+        body?: Record<string, unknown>;
+      }> = [
+          { method: "delete", path: `/auth/users/${userId}` },
+          { method: "delete", path: `/users/${userId}` },
+          { method: "delete", path: `/auth/user/${userId}` },
+          { method: "delete", path: `/admin/users/${userId}` },
+          { method: "delete", path: `/auth/users/delete/${userId}` },
+          { method: "delete", path: `/users/delete/${userId}` },
+          { method: "post", path: `/auth/users/${userId}/delete`, body: {} },
+          { method: "post", path: `/auth/users/delete`, body: { userId } },
+          { method: "post", path: `/users/delete`, body: { userId } },
+        ];
+
+      let lastError: unknown;
+      const failedRoutes: string[] = [];
+
+      for (const attempt of attempts) {
+        try {
+          const res =
+            attempt.method === "delete"
+              ? await axiosApi.delete(attempt.path)
+              : await axiosApi.post(attempt.path, attempt.body ?? {});
+          return res.data;
+        } catch (error: unknown) {
+          const status =
+            error && typeof error === "object" && "response" in error
+              ? (error as { response?: { status?: number } }).response?.status
+              : undefined;
+          const shouldTryNext = status === 404 || status === 405;
+
+          failedRoutes.push(`${attempt.method.toUpperCase()} ${attempt.path} (${status ?? "ERR"})`);
+
+          if (!shouldTryNext) {
+            throw error;
+          }
+
+          lastError = error;
+        }
+      }
+
+      if (lastError) {
+        const routeSummary = failedRoutes.join(", ");
+        throw new Error(
+          `Delete user endpoint not found. Tried: ${routeSummary}`
+        );
+      }
+
+      throw lastError;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });

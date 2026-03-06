@@ -125,6 +125,12 @@ export default function UserManagementPage() {
             return;
         }
 
+        const userId = String(user?._id || user?.id || "").trim();
+        if (!userId) {
+            toast.error("Unable to delete user: missing user id.");
+            return;
+        }
+
         const confirmed = window.confirm(
             `Delete user \"${user.name}\" (${user.email})? This action cannot be undone.`
         );
@@ -132,7 +138,7 @@ export default function UserManagementPage() {
 
         const toastId = toast.loading("Deleting user...");
         try {
-            await deleteUserMutation.mutateAsync(user.id || user._id);
+            await deleteUserMutation.mutateAsync(userId);
             toast.success("User deleted successfully.", { id: toastId });
         } catch (err: any) {
             toast.error(err?.response?.data?.message ?? err?.message ?? "Failed to delete user.", {

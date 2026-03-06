@@ -195,8 +195,18 @@ export default function ChatWorkspace({ initialConversationId = null }: ChatWork
                     setOptimisticMessages((prev) => prev.filter((m) => m._id !== sent.data._id));
                 }, 500);
             }
-        } catch {
-            toast.error('Failed to send message');
+        } catch (error: unknown) {
+            const backendMessage =
+                error && typeof error === 'object' && 'response' in error
+                    ? (error as { response?: { data?: { message?: string } } }).response?.data?.message
+                    : undefined;
+
+            const fallbackMessage =
+                error && typeof error === 'object' && 'message' in error
+                    ? String((error as { message?: string }).message ?? '')
+                    : '';
+
+            toast.error(backendMessage || fallbackMessage || 'Failed to send message');
             setOptimisticMessages((prev) => prev.filter((m) => m._id !== tempId));
             setMessageText(text);
         }
