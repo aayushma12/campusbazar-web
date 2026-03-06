@@ -157,3 +157,4 @@ describe('admin panel', () => {
 // wording check: expectation follows current API response shape
 // edge-case thought: empty result list should still render shell
 // maintenance: keep this setup aligned with auth store contract
+// readability: grouping arrange/act/assert mentally helps here
