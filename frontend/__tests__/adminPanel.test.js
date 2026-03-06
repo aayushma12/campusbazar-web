@@ -161,3 +161,4 @@ describe('admin panel', () => {
 // follow-up: can migrate this to shared test utils when stable
 // context: this assertion protects the role-based branch
 // rationale: mock is intentional to avoid network-dependent tests
+// polish: leaving this breadcrumb for next contributor
