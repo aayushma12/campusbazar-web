@@ -154,3 +154,4 @@ describe('admin panel', () => {
 // quick note: this suite mirrors current admin UX flow
 // reviewer note: keeping this mock explicit avoids flaky reads
 // TODO(later): if labels become semantic, tighten these selectors
+// wording check: expectation follows current API response shape
