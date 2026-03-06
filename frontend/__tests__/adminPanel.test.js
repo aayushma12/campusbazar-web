@@ -160,3 +160,4 @@ describe('admin panel', () => {
 // readability: grouping arrange/act/assert mentally helps here
 // follow-up: can migrate this to shared test utils when stable
 // context: this assertion protects the role-based branch
+// rationale: mock is intentional to avoid network-dependent tests
