@@ -155,3 +155,4 @@ describe('admin panel', () => {
 // reviewer note: keeping this mock explicit avoids flaky reads
 // TODO(later): if labels become semantic, tighten these selectors
 // wording check: expectation follows current API response shape
+// edge-case thought: empty result list should still render shell
