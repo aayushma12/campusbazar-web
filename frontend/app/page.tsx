@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import Link from "next/link";
 import { ArrowRight, ShoppingBag, Users, BookOpen, Shield, Sparkles } from "lucide-react";
-
+ 
 export default function HomePage() {
   const router = useRouter();
   const { isAuthenticated, isAdmin } = useAuthStore();
