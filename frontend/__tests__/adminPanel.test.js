@@ -153,3 +153,4 @@ describe('admin panel', () => {
 // comment-only local commit 31
 // quick note: this suite mirrors current admin UX flow
 // reviewer note: keeping this mock explicit avoids flaky reads
+// TODO(later): if labels become semantic, tighten these selectors
