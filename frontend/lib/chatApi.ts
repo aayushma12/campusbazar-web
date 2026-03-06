@@ -174,8 +174,8 @@ export const chatApi = {
 
     getMessages: async (conversationId: string, page = 1): Promise<{ success: boolean; data: ChatMessage[] }> => {
         const payload = await getWithFallback<any>(
-            `/chat/messages/${conversationId}?page=${page}`,
-            `/chats/${conversationId}/messages?page=${page}`
+            `/chats/${conversationId}/messages?page=${page}`,
+            `/chat/messages/${conversationId}?page=${page}`
         );
 
         if (Array.isArray(payload?.messages)) {
@@ -194,12 +194,12 @@ export const chatApi = {
 
     sendMessage: async (conversationId: string, text: string): Promise<{ success: boolean; data: ChatMessage }> => {
         const attempts: Array<{ path: string; body: Record<string, unknown> }> = [
+            { path: `/chats/${conversationId}/messages`, body: { text } },
+            { path: `/chats/${conversationId}/messages`, body: { message: text } },
             { path: '/chat/message', body: { chatRoomId: conversationId, message: text } },
             { path: '/chat/message', body: { conversationId, text } },
             { path: `/chat/messages/${conversationId}`, body: { message: text } },
             { path: `/chat/${conversationId}/message`, body: { message: text } },
-            { path: `/chats/${conversationId}/messages`, body: { text } },
-            { path: `/chats/${conversationId}/messages`, body: { message: text } },
             { path: '/chats/message', body: { conversationId, text } },
         ];
 
