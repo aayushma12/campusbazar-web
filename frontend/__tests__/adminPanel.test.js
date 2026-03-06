@@ -151,3 +151,4 @@ describe('admin panel', () => {
 // comment-only local commit 29
 // comment-only local commit 30
 // comment-only local commit 31
+// quick note: this suite mirrors current admin UX flow
