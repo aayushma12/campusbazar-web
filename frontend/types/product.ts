@@ -1,4 +1,4 @@
-import { getUserId, normalizeUser, type User } from '@/types/user';
+import { getUserId, isUserDeleted, normalizeUser, type User } from '@/types/user';
 
 export type ProductCondition = 'new' | 'like_new' | 'good' | 'fair' | 'poor';
 export type ProductStatus = 'available' | 'reserved' | 'sold' | string;
@@ -151,10 +151,19 @@ export function normalizeProduct(value: unknown): Product | null {
   const id = getProductId(obj);
   if (!id) return null;
 
+  const rawOwner = obj.seller ?? obj.ownerId;
+  const ownerId = getUserId(rawOwner);
+
+  // Hide orphan listings (e.g. seller account deleted) from public product feeds.
+  if (!ownerId) return null;
+
+  // Hide listings whose seller has been soft-deleted by admin.
+  if (isUserDeleted(rawOwner)) return null;
+
   const conditionRaw = String(obj.condition ?? 'good') as ProductCondition;
   const condition: ProductCondition = CONDITION_LABELS[conditionRaw] ? conditionRaw : 'good';
 
-  const seller = normalizeUser(obj.seller ?? obj.ownerId);
+  const seller = normalizeUser(rawOwner);
   const categoryObject = normalizeCategory(obj.category ?? obj.categoryId);
 
   return {
@@ -171,7 +180,7 @@ export function normalizeProduct(value: unknown): Product | null {
     images: normalizeProductImages(obj.images),
     category: categoryObject ?? (getId(obj.category) || undefined),
     categoryId: categoryObject ?? (getId(obj.categoryId) || undefined),
-    ownerId: seller ?? (getUserId(obj.ownerId) || undefined),
+    ownerId: seller ?? ownerId,
     seller: seller ?? undefined,
     views: Number.isFinite(Number(obj.views)) ? Number(obj.views) : 0,
     createdAt: typeof obj.createdAt === 'string' ? obj.createdAt : undefined,

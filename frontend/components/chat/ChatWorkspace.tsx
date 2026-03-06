@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import {
     useGetConversations,
@@ -59,8 +59,9 @@ export default function ChatWorkspace({ initialConversationId = null }: ChatWork
     const messages: ChatMessage[] = messagesData?.data ?? [];
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const lastMarkedIncomingMessageRef = useRef<string | null>(null);
 
-    const mergedMessages: ChatMessage[] = (() => {
+    const mergedMessages: ChatMessage[] = useMemo(() => {
         const all = [...messages, ...optimisticMessages];
         const byId = new Map<string, ChatMessage>();
 
@@ -74,7 +75,19 @@ export default function ChatWorkspace({ initialConversationId = null }: ChatWork
             const bTime = b?.createdAt ? new Date(b.createdAt).getTime() : 0;
             return aTime - bTime;
         });
-    })();
+    }, [messages, optimisticMessages]);
+
+    const latestUnreadIncomingMessageId = useMemo(() => {
+        for (let idx = mergedMessages.length - 1; idx >= 0; idx -= 1) {
+            const msg = mergedMessages[idx];
+            if (!msg?._id) continue;
+            if (msg.senderId === user?.id) continue;
+            if (msg.read) continue;
+            return msg._id;
+        }
+
+        return null;
+    }, [mergedMessages, user?.id]);
 
     useEffect(() => {
         if (initialConversationId) {
@@ -142,15 +155,29 @@ export default function ChatWorkspace({ initialConversationId = null }: ChatWork
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-        if (activeConversationId) {
-            markAsRead(activeConversationId).catch(() => {
-                // Non-blocking: read receipt sync can fail transiently.
-            });
+    }, [mergedMessages.length]);
+
+    useEffect(() => {
+        if (!activeConversationId || !latestUnreadIncomingMessageId) {
+            return;
         }
-    }, [mergedMessages, activeConversationId, markAsRead]);
+
+        const dedupeKey = `${activeConversationId}:${latestUnreadIncomingMessageId}`;
+        if (lastMarkedIncomingMessageRef.current === dedupeKey) {
+            return;
+        }
+
+        lastMarkedIncomingMessageRef.current = dedupeKey;
+        markAsRead(activeConversationId).catch(() => {
+            if (lastMarkedIncomingMessageRef.current === dedupeKey) {
+                lastMarkedIncomingMessageRef.current = null;
+            }
+        });
+    }, [activeConversationId, latestUnreadIncomingMessageId, markAsRead]);
 
     useEffect(() => {
         setOptimisticMessages([]);
+        lastMarkedIncomingMessageRef.current = null;
     }, [activeConversationId]);
 
     const activeConversation = conversations.find(
