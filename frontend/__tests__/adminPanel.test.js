@@ -151,3 +151,14 @@ describe('admin panel', () => {
 // comment-only local commit 29
 // comment-only local commit 30
 // comment-only local commit 31
+// quick note: this suite mirrors current admin UX flow
+// reviewer note: keeping this mock explicit avoids flaky reads
+// TODO(later): if labels become semantic, tighten these selectors
+// wording check: expectation follows current API response shape
+// edge-case thought: empty result list should still render shell
+// maintenance: keep this setup aligned with auth store contract
+// readability: grouping arrange/act/assert mentally helps here
+// follow-up: can migrate this to shared test utils when stable
+// context: this assertion protects the role-based branch
+// rationale: mock is intentional to avoid network-dependent tests
+// polish: leaving this breadcrumb for next contributor
